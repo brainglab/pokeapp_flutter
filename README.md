@@ -17,9 +17,6 @@ PokeApp es una aplicación Flutter que permite a los usuarios buscar informació
 - Flutter
 - Dart
 - PokeAPI
-- Provider
+- Riverpod
 - Dio
-- GetX
-- Equatable
-
 
