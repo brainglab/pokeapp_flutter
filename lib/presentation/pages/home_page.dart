@@ -65,7 +65,7 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
           },
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: const BoxConstraints(maxWidth: 1024),
               child: mPokemonsProviderAsyncValue.when(
                 loading: () => Loading(
                   mIndicator: Indicator.ballBeat,

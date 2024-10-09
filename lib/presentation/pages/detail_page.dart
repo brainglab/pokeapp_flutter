@@ -42,7 +42,7 @@ class DetailPage extends ConsumerWidget {
           },
           child: Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 800),
+              constraints: const BoxConstraints(maxWidth: 1024),
               child: mPokemonAsyncValue.when(
                 loading: () => Container(
                   alignment: Alignment.center,

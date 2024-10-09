@@ -24,7 +24,7 @@ La aplicación PokeApp ha sido diseñada con un enfoque en la responsividad, ase
 ### Centrado y ancho máximo
 
 - El contenido principal de la aplicación está centrado en la pantalla.
-- Se utiliza un ancho máximo de 800 píxeles para garantizar una legibilidad óptima en pantallas más grandes.
+- Se utiliza un ancho máximo de 1024 píxeles para garantizar una legibilidad óptima en pantallas más grandes.
 
 ## Versiones de tecnologías usadas
 
