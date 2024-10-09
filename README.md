@@ -16,6 +16,19 @@ A continuación, se muestran capturas de pantalla de la aplicación en temas cla
 
 Estas imágenes muestran la interfaz de usuario de la aplicación en ambos modos, destacando la adaptabilidad del diseño a diferentes preferencias de tema.
 
+
+## Diseño responsivo
+
+La aplicación PokeApp ha sido diseñada con un enfoque en la responsividad, asegurando una experiencia de usuario óptima en una variedad de dispositivos. Algunas características clave del diseño responsivo incluyen:
+
+### Centrado y ancho máximo
+
+- El contenido principal de la aplicación está centrado en la pantalla.
+- Se utiliza un ancho máximo de 800 píxeles para garantizar una legibilidad óptima en pantallas más grandes.
+
+Ejemplo de código que implementa esta restricción:
+
+
 ## Versiones de tecnologías usadas
 
 - Versión de Flutter: 3.24.3
