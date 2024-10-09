@@ -11,24 +11,26 @@ import 'package:tuple/tuple.dart';
 ///
 /// Esta clase abstracta establece el contrato para las operaciones relacionadas
 /// con la obtención de datos de Pokémon. Define los métodos que deben ser
-/// implementados por cualquier fuente de datos concreta, ya sea una API remota,
-/// una base de datos local, o cualquier otra fuente.
+/// implementados por cualquier fuente de datos concreta, como una API remota
+/// o una base de datos local.
 ///
 /// Métodos definidos:
 /// - [getPokemons]: Obtiene una lista paginada de Pokémon.
 /// - [getPokemonForId]: Obtiene los detalles de un Pokémon específico por su ID.
 /// - [getPokemonImage]: Obtiene la imagen de un Pokémon.
 ///
-/// Al utilizar esta interfaz, se facilita la implementación de diferentes
-/// fuentes de datos y se permite una fácil sustitución o modificación de la
-/// fuente de datos sin afectar al resto del código de la aplicación.
+/// Beneficios:
+/// - Facilita la implementación de diferentes fuentes de datos.
+/// - Permite una fácil sustitución o modificación de la fuente de datos.
+/// - Mantiene una separación clara entre la lógica de obtención de datos y el resto de la aplicación.
+/// - Mejora la modularidad y facilita las pruebas unitarias.
+/// - Proporciona una estructura consistente para manejar datos de Pokémon en toda la aplicación.
 ///
-/// Esta abstracción es crucial para mantener una separación clara entre
-/// la lógica de obtención de datos y el resto de la lógica de la aplicación,
-/// lo que mejora la modularidad y facilita las pruebas unitarias.
+/// Esta abstracción es fundamental para mantener un diseño flexible y escalable,
+/// permitiendo adaptar fácilmente la aplicación a diferentes orígenes de datos en el futuro.
 abstract class PokemonDataSource {
-  Future<Tuple2<List<PokemonModel>, String?>> getPokemons(String mParameters);
-  Future<PokemonModel> getPokemonForId(String id);
+  Future<Tuple3<bool, List<PokemonModel>, String?>> getPokemons(String mParameters);
+  Future<Tuple2<bool, PokemonModel?>> getPokemonForId(String mId);
   Future<Tuple2<bool, Uint8List?>> getPokemonImage(String mUrl);
 }
 
@@ -41,12 +43,16 @@ abstract class PokemonDataSource {
 /// Características principales:
 /// - Utiliza instancias de [Dio] para realizar solicitudes HTTP.
 /// - Implementa métodos para obtener listas de Pokémon, detalles de Pokémon individuales,
-///   y imágenes de Pokémon.
+///   e imágenes de Pokémon.
 /// - Maneja la paginación de resultados al obtener listas de Pokémon.
 /// - Procesa las respuestas JSON de la API y las convierte en modelos de datos utilizables.
+/// - Gestiona errores y excepciones durante las solicitudes HTTP.
+/// - Optimiza el rendimiento mediante el uso eficiente de recursos de red.
 ///
 /// Esta clase es fundamental para la capa de datos de la aplicación, actuando como
 /// intermediario entre la API externa de Pokémon y la lógica de negocio de la aplicación.
+/// Proporciona una abstracción robusta que facilita la escalabilidad y el mantenimiento
+/// del código relacionado con la obtención de datos de Pokémon.
 class PokemonDataSourceImpl implements PokemonDataSource {
   final Dio mDio = getDio();
   final Dio mDioImage = getDioImage();
@@ -59,20 +65,23 @@ class PokemonDataSourceImpl implements PokemonDataSource {
   /// @param mParameters Una cadena que contiene los parámetros de consulta (por ejemplo, 'limit=20&offset=0').
   ///                    Si está vacía, se utilizará una consulta sin parámetros.
   ///
-  /// @return Un [Future] que resuelve a un [Tuple2] conteniendo:
-  ///   - item1: Una lista de [PokemonModel] representando los Pokémon obtenidos.
-  ///   - item2: Una cadena con los parámetros para la siguiente página de resultados.
+  /// @return Un [Future] que resuelve a un [Tuple3] conteniendo:
+  ///   - item1: Un booleano que indica si la operación fue exitosa (true) o no (false).
+  ///   - item2: Una lista de [PokemonModel] representando los Pokémon obtenidos.
+  ///   - item3: Una cadena con los parámetros para la siguiente página de resultados.
   ///            Será null si no hay más resultados.
-  ///
-  /// @throws [Exception] Si ocurre un error durante la solicitud HTTP o al procesar la respuesta.
   ///
   /// Ejemplo de uso:
   /// ```dart
   /// try {
   ///   final resultado = await getPokemons('limit=20&offset=0');
-  ///   final listaPokemon = resultado.item1;
-  ///   final parametrosSiguientePagina = resultado.item2;
-  ///   // Usar listaPokemon y parametrosSiguientePagina
+  ///   if (resultado.item1) {
+  ///     final listaPokemon = resultado.item2;
+  ///     final parametrosSiguientePagina = resultado.item3;
+  ///     // Usar listaPokemon y parametrosSiguientePagina
+  ///   } else {
+  ///     print('No se pudieron obtener los Pokémon');
+  ///   }
   /// } catch (e) {
   ///   print('Error al obtener Pokémon: $e');
   /// }
@@ -80,9 +89,9 @@ class PokemonDataSourceImpl implements PokemonDataSource {
   ///
   /// Nota: Este método construye la URL de la solicitud utilizando los parámetros
   /// proporcionados y las constantes definidas en [BlEndpoint]. Si ocurre un error,
-  /// se imprime en la consola y se devuelve una lista vacía con parámetros nulos.
+  /// se imprime en la consola y se devuelve un Tuple3 con false, una lista vacía y una cadena vacía.
   @override
-  Future<Tuple2<List<PokemonModel>, String>> getPokemons(String mParameters) async {
+  Future<Tuple3<bool, List<PokemonModel>, String?>> getPokemons(String mParameters) async {
     var mAuxParameters = mParameters.isNotEmpty ? mParameters : '';
     try {
       final mUrl = Uri(
@@ -95,10 +104,10 @@ class PokemonDataSourceImpl implements PokemonDataSource {
       final mResponse = await mDio.get(mUrl.toString());
       String mNextUrl = mResponse.data['next'] ?? '';
       String mNextParams = mNextUrl.contains('?') ? mNextUrl.split('?')[1] : '';
-      return Tuple2<List<PokemonModel>, String>(PokemonModel.fromJsonList(mResponse.data['results']), mNextParams);
+      return Tuple3<bool, List<PokemonModel>, String?>(true, PokemonModel.fromJsonList(mResponse.data['results']), mNextParams);
     } catch (e, stackTrace) {
       debugPrint('==> $runtimeType error: $e, stackTrace: $stackTrace');
-      return const Tuple2<List<PokemonModel>, String>([], '');
+      return const Tuple3<bool, List<PokemonModel>, String?>(false, [], '');
     }
   }
 
@@ -109,27 +118,28 @@ class PokemonDataSourceImpl implements PokemonDataSource {
   ///
   /// @param id Una cadena que representa el ID único del Pokémon.
   ///
-  /// @return Un [Future] que resuelve a un [PokemonModel] que contiene todos los
-  ///         detalles del Pokémon solicitado.
-  ///
-  /// @throws [Exception] Si ocurre un error durante la solicitud HTTP o al procesar la respuesta.
+  /// @return Un [Future] que resuelve a un [Tuple2] conteniendo:
+  ///   - item1: Un booleano que indica si la operación fue exitosa (true) o no (false).
+  ///   - item2: Un [PokemonModel] que contiene todos los detalles del Pokémon solicitado,
+  ///            o un modelo vacío si la operación falló.
   ///
   /// Ejemplo de uso:
   /// ```dart
-  /// try {
-  ///   final pokemonDetallado = await getPokemonForId('25'); // Obtiene detalles de Pikachu
+  /// final resultado = await getPokemonForId('25'); // Obtiene detalles de Pikachu
+  /// if (resultado.item1) {
+  ///   final pokemonDetallado = resultado.item2;
   ///   // Usar pokemonDetallado
-  /// } catch (e) {
-  ///   print('Error al obtener detalles del Pokémon: $e');
+  /// } else {
+  ///   print('No se pudo obtener los detalles del Pokémon');
   /// }
   /// ```
   ///
   /// Nota: Este método construye la URL de la solicitud utilizando el ID proporcionado
   /// y las constantes definidas en [BlEndpoint]. La respuesta se procesa y se convierte
-  /// en un objeto [PokemonModel] para un fácil manejo de los datos. Si la solicitud falla
-  /// o la respuesta no es válida, se lanza una excepción con un mensaje descriptivo.
+  /// en un objeto [PokemonModel]. Si ocurre un error durante la solicitud o el procesamiento,
+  /// se registra en la consola y se devuelve un Tuple2 con false y un modelo vacío.
   @override
-  Future<PokemonModel> getPokemonForId(String id) async {
+  Future<Tuple2<bool, PokemonModel>> getPokemonForId(String id) async {
     try {
       final mUrl = Uri(
         scheme: BlEndpoint.mWebServiceScheme,
@@ -141,13 +151,13 @@ class PokemonDataSourceImpl implements PokemonDataSource {
       debugPrint('==> $runtimeType respuesta: $mResponse');
 
       if (mResponse.statusCode == 200) {
-        return PokemonModel.fromMap(mResponse.data);
+        return Tuple2<bool, PokemonModel>(true, PokemonModel.fromMap(mResponse.data));
       } else {
-        throw Exception('Error al obtener datos del Pokémon: ${mResponse.statusCode}');
+        return Tuple2<bool, PokemonModel>(false, PokemonModel());
       }
     } catch (mError, mStackTrace) {
       debugPrint('==> $runtimeType error: $mError, stackTrace: $mStackTrace');
-      throw Exception('Error al obtener datos del Pokémon: $mError');
+      return Tuple2<bool, PokemonModel>(false, PokemonModel());
     }
   }
 
@@ -163,20 +173,22 @@ class PokemonDataSourceImpl implements PokemonDataSource {
   ///   - El segundo elemento es un [Uint8List] que contiene los bytes de la imagen si la descarga fue exitosa,
   ///     o null si hubo un error.
   ///
-  /// @throws No lanza excepciones directamente, pero captura y maneja internamente cualquier error que pueda ocurrir.
-  ///
   /// Ejemplo de uso:
   /// ```dart
-  /// final resultado = await getPokemonImage('https://ejemplo.com/imagen_pokemon.png');
-  /// if (resultado.item1) {
-  ///   // La descarga fue exitosa, usar resultado.item2 para acceder a los bytes de la imagen
+  /// final mResultado = await mPokemonDataSource.getPokemonImage('https://ejemplo.com/imagen_pokemon.png');
+  /// if (mResultado.item1) {
+  ///   // La descarga fue exitosa, usar mResultado.item2 para acceder a los bytes de la imagen
+  ///   final mImagenBytes = mResultado.item2;
+  ///   // Usar mImagenBytes para mostrar la imagen
   /// } else {
   ///   // Hubo un error en la descarga
+  ///   customShowToast('No se pudo cargar la imagen del Pokémon');
   /// }
   /// ```
   ///
   /// Nota: Este método utiliza [mDioImage] para realizar la solicitud HTTP y está configurado
   /// para manejar respuestas de tipo bytes. Los errores se capturan y se registran para depuración.
+  /// En caso de error, se devuelve un Tuple2 con false y null, permitiendo un manejo gracioso del fallo.
   @override
   Future<Tuple2<bool, Uint8List?>> getPokemonImage(String mAuxUrl) async {
     final mUrl = Uri.parse(mAuxUrl);

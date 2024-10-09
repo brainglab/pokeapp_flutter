@@ -36,6 +36,19 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
         mBackgroundButtonColor: mBlTheme.mColorBackgroundLayout,
         mTitle: "Pokemons",
         mShowBack: false,
+        mShowMenu: false,
+        mMenu: CustomButton(
+          color: mBlTheme.mColorBackgroundLayout,
+          borderRadius: 500,
+          child: Icon(
+            TablerIcons.reload,
+            color: mBlTheme.mColorBlack,
+            size: 22,
+          ),
+          callback: () {
+            ref.read(mPokemonsProvider.notifier).clearPokemons();
+          },
+        ),
         mListActions: [
           CustomButton(
             color: Colors.transparent,
@@ -67,61 +80,44 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1024),
               child: mPokemonsProviderAsyncValue.when(
-                loading: () => Loading(
-                  mIndicator: Indicator.ballBeat,
-                  mColor: mBlTheme.mColorAccent,
-                ),
+                loading: () => const Center(child: CircularProgressIndicator()),
                 error: (error, stack) => Center(child: Text('Error: $error')),
                 data: (pokemons) {
-                  return SizedBox(
-                    height: double.infinity,
-                    child: LazyLoadScrollView(
-                      onEndOfPage: () {
-                        // Implementación del scroll infinito
-                        final mNextUrl = pokemons.item2;
-                        if (mNextUrl != null && mNextUrl.isNotEmpty) {
-                          ref.read(mPokemonsProvider.notifier).loadMorePokemons(mNextUrl);
-                        }
-                      },
-                      child: SingleChildScrollView(
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        child: SizedBox(
-                          child: Column(
-                            children: [
-                              const SizedBox(height: 20),
-                              pokemons.item1.isEmpty
-                                  ? Container(
-                                      margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                                      width: double.infinity,
-                                      child: Text(
-                                        "No hay registros para mostrar",
-                                        style: mBlTheme.mTextStyleGrayBold,
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    )
-                                  : ListView.builder(
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      shrinkWrap: true,
-                                      itemCount: pokemons.item1.length,
-                                      itemBuilder: (context, index) {
-                                        final pokemon = pokemons.item1[index];
-                                        return PokemonCard(pokemon: pokemon);
-                                      },
-                                    ),
-                              // Indicador de carga al final de la lista
-                              if (pokemons.item2 != null && pokemons.item2!.isNotEmpty)
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Loading(
-                                    mIndicator: Indicator.ballBeat,
-                                    mColor: mBlTheme.mColorAccent,
-                                    mSize: 30,
-                                  ),
-                                ),
-                            ],
+                  return LazyLoadScrollView(
+                    onEndOfPage: () {
+                      // Implementación del scroll infinito
+                      final mNextUrl = pokemons.item2;
+                      if (mNextUrl != null && mNextUrl.isNotEmpty) {
+                        ref.read(mPokemonsProvider.notifier).loadMorePokemons(mNextUrl);
+                      }
+                    },
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        const SizedBox(height: 20),
+                        if (pokemons.item1.isEmpty)
+                          Container(
+                            margin: const EdgeInsets.only(top: 20, left: 20, right: 20),
+                            width: double.infinity,
+                            child: Text(
+                              "No hay registros para mostrar",
+                              style: mBlTheme.mTextStyleGrayBold,
+                              textAlign: TextAlign.center,
+                            ),
+                          )
+                        else
+                          ...pokemons.item1.map((pokemon) => PokemonCard(pokemon: pokemon)),
+                        // Indicador de carga al final de la lista
+                        if (pokemons.item2 != null && pokemons.item2!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Loading(
+                              mIndicator: Indicator.ballBeat,
+                              mColor: mBlTheme.mColorAccent,
+                              mSize: 30,
+                            ),
                           ),
-                        ),
-                      ),
+                      ],
                     ),
                   );
                 },

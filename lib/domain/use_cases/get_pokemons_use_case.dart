@@ -60,7 +60,7 @@ class GetPokemonsUseCase {
   /// Nota: Este método maneja la lógica de negocio para obtener una lista paginada de Pokémon,
   /// abstrayendo los detalles de implementación del repositorio y proporcionando
   /// una interfaz limpia para la capa de presentación.
-  Future<Tuple2<List<PokemonModel>, String?>> call(String mParameters) async {
+  Future<Tuple3<bool, List<PokemonModel>, String?>> call(String mParameters) async {
     return await pokemonRepository.getPokemons(mParameters);
   }
 }

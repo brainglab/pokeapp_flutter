@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokeapp_flutter/data/repositories/pokemon_repository_impl.dart';
 import 'package:pokeapp_flutter/data/models/pokemon_model.dart';
 import 'package:pokeapp_flutter/data/datasources/pokemons_data_source.dart';
+import 'package:pokeapp_flutter/presentation/helpers/toast.dart';
 import 'package:tuple/tuple.dart';
 
 /// Proveedor para el repositorio de Pokémon.
@@ -10,19 +11,21 @@ import 'package:tuple/tuple.dart';
 /// una instancia única de [PokemonRepositoryImpl] en toda la aplicación.
 ///
 /// Características principales:
-/// - Crea una instancia de [PokemonRepositoryImpl] de forma lazy.
-/// - Garantiza una única instancia del repositorio en toda la app.
-/// - Facilita la inyección de dependencias y mejora la testabilidad.
+/// - Crea una instancia de [PokemonRepositoryImpl] de forma perezosa.
+/// - Garantiza una única instancia del repositorio en toda la aplicación.
+/// - Facilita la inyección de dependencias y mejora la capacidad de prueba.
 ///
 /// Uso típico:
 /// ```dart
-/// final repository = ref.watch(mPokemonRepositoryProvider);
+/// final mRepositorio = ref.watch(mPokemonRepositoryProvider);
 /// ```
 ///
 /// Beneficios:
 /// 1. Centraliza la creación del repositorio, evitando duplicación de código.
 /// 2. Permite cambiar fácilmente la implementación del repositorio si es necesario.
 /// 3. Facilita el acceso al repositorio desde cualquier parte de la aplicación.
+/// 4. Mejora la modularidad y mantenibilidad del código.
+/// 5. Simplifica la implementación de pruebas unitarias y de integración.
 ///
 /// @param ref El [ProviderRef] proporcionado automáticamente por Riverpod.
 /// @return Una instancia de [PokemonRepositoryImpl] configurada con [PokemonDataSourceImpl].
@@ -43,7 +46,7 @@ final mPokemonRepositoryProvider = Provider<PokemonRepositoryImpl>((ref) {
 /// Uso típico:
 /// ```dart
 /// // Leer los parámetros actuales
-/// final mParameters = ref.watch(mPokemonsParametersProvider);
+/// final mParametros = ref.watch(mPokemonsParametersProvider);
 ///
 /// // Actualizar los parámetros
 /// ref.read(mPokemonsParametersProvider.notifier).state = "nuevoParametro";
@@ -53,9 +56,13 @@ final mPokemonRepositoryProvider = Provider<PokemonRepositoryImpl>((ref) {
 /// 1. Centraliza la gestión de los parámetros de búsqueda para Pokémon.
 /// 2. Permite una fácil integración con widgets de búsqueda y filtrado.
 /// 3. Facilita la implementación de búsquedas dinámicas y en tiempo real.
+/// 4. Mejora la reactividad de la interfaz de usuario al cambiar los parámetros de búsqueda.
+/// 5. Simplifica la implementación de funciones avanzadas de filtrado y ordenación.
 ///
-/// Este proveedor es crucial para implementar funcionalidades de búsqueda y filtrado
+/// Este proveedor es esencial para implementar funcionalidades de búsqueda y filtrado
 /// en la aplicación, permitiendo una experiencia de usuario más interactiva y personalizada.
+/// Además, facilita la implementación de características como historial de búsquedas
+/// y sugerencias basadas en búsquedas anteriores.
 final mPokemonsParametersProvider = StateProvider<String>((ref) {
   return "";
 });
@@ -83,9 +90,13 @@ final mPokemonsParametersProvider = StateProvider<String>((ref) {
 /// 1. Centraliza la gestión del Pokémon seleccionado en toda la aplicación.
 /// 2. Facilita la implementación de funcionalidades como la visualización de detalles de un Pokémon.
 /// 3. Permite una fácil sincronización entre diferentes partes de la UI que dependen del Pokémon seleccionado.
+/// 4. Mejora la eficiencia al evitar múltiples solicitudes de datos para el mismo Pokémon.
+/// 5. Simplifica la implementación de funciones como "favoritos" o "últimos vistos".
 ///
 /// Este proveedor es esencial para implementar la navegación y la visualización de detalles
 /// de Pokémon específicos, mejorando la interactividad y la experiencia del usuario en la aplicación.
+/// Además, facilita la implementación de características avanzadas como el seguimiento del historial
+/// de Pokémon vistos o la persistencia de selecciones entre sesiones de usuario.
 final mSelectedPokemonIdProvider = StateProvider<String?>((ref) {
   return null;
 });
@@ -98,27 +109,31 @@ final mSelectedPokemonIdProvider = StateProvider<String?>((ref) {
 /// Características principales:
 /// - Utiliza [PokemonsNotifier] como notificador de estado.
 /// - Retorna un [AsyncValue] que contiene:
-///   - Una lista de [PokemonModel] representando los Pokémon cargados.
-///   - Un String opcional que puede contener información adicional (como un token de paginación).
-/// - Permite la carga inicial y la actualización dinámica de la lista de Pokémon.
+///   - Una tupla [Tuple2] con una lista de [PokemonModel] y un String opcional.
+/// - Permite la carga inicial, actualización dinámica y paginación de la lista de Pokémon.
 ///
 /// Uso típico:
 /// ```dart
-/// final pokemonsState = ref.watch(mPokemonsProvider);
-/// pokemonsState.when(
-///   data: (data) => // Manejar los datos cargados,
-///   loading: () => // Mostrar indicador de carga,
-///   error: (error, stack) => // Manejar el error
+/// final mPokemonsState = ref.watch(mPokemonsProvider);
+/// mPokemonsState.when(
+///   data: (mData) {
+///     final mPokemonList = mData.item1;
+///     final mNextPageToken = mData.item2;
+///     // Usar mPokemonList y mNextPageToken
+///   },
+///   loading: () => const CircularProgressIndicator(),
+///   error: (mError, mStack) => Text('Error: $mError'),
 /// );
 /// ```
 ///
 /// Beneficios:
-/// 1. Centraliza la gestión del estado de la lista de Pokémon en la aplicación.
-/// 2. Facilita la implementación de funcionalidades como carga infinita o paginación.
-/// 3. Permite una fácil integración con widgets que dependen de la lista de Pokémon.
+/// 1. Centraliza la gestión del estado de la lista de Pokémon.
+/// 2. Facilita la implementación de carga infinita y paginación.
+/// 3. Permite una integración sencilla con widgets que dependen de la lista de Pokémon.
+/// 4. Mejora la eficiencia en la carga y actualización de datos.
 ///
-/// Este proveedor es fundamental para la funcionalidad principal de la aplicación,
-/// gestionando la carga y actualización de la lista de Pokémon de manera eficiente.
+/// Este proveedor es esencial para la funcionalidad principal de la aplicación,
+/// ofreciendo una gestión robusta y eficiente de la lista de Pokémon.
 final mPokemonsProvider = StateNotifierProvider<PokemonsNotifier, AsyncValue<Tuple2<List<PokemonModel>, String?>>>((ref) {
   return PokemonsNotifier(ref.watch(mPokemonRepositoryProvider));
 });
@@ -131,11 +146,12 @@ final mPokemonsProvider = StateNotifierProvider<PokemonsNotifier, AsyncValue<Tup
 /// Características principales:
 /// - Mantiene un estado de tipo [AsyncValue<Tuple2<List<PokemonModel>, String?>>].
 /// - La lista de Pokémon se almacena como [List<PokemonModel>].
-/// - El String opcional puede usarse para almacenar información de paginación.
+/// - El String opcional se usa para almacenar información de paginación.
 ///
 /// Funcionalidades:
 /// - Carga inicial de Pokémon.
 /// - Carga de más Pokémon (paginación).
+/// - Limpieza y recarga de la lista de Pokémon.
 /// - Manejo de errores durante la carga.
 ///
 /// El estado se actualiza de forma asíncrona, permitiendo mostrar estados de carga,
@@ -143,13 +159,15 @@ final mPokemonsProvider = StateNotifierProvider<PokemonsNotifier, AsyncValue<Tup
 ///
 /// Uso típico:
 /// ```dart
-/// final notifier = PokemonsNotifier(repository);
-/// notifier.loadPokemons(); // Carga inicial
-/// notifier.loadMorePokemons(nextPageToken); // Cargar más Pokémon
+/// final mNotifier = PokemonsNotifier(mRepository);
+/// mNotifier.loadPokemons(); // Carga inicial
+/// mNotifier.loadMorePokemons(mNextPageToken); // Cargar más Pokémon
+/// mNotifier.clearPokemons(); // Limpiar y recargar la lista
 /// ```
 ///
 /// Esta clase es crucial para la gestión eficiente de la lista de Pokémon en la aplicación,
 /// proporcionando una forma robusta de manejar datos asíncronos y actualizaciones de estado.
+/// Además, incluye manejo de errores y notificaciones al usuario mediante customShowToast.
 class PokemonsNotifier extends StateNotifier<AsyncValue<Tuple2<List<PokemonModel>, String?>>> {
   final PokemonRepositoryImpl mRepository;
   List<PokemonModel> mPokemonList = [];
@@ -158,11 +176,22 @@ class PokemonsNotifier extends StateNotifier<AsyncValue<Tuple2<List<PokemonModel
     loadPokemons();
   }
 
+  clearPokemons() {
+    mPokemonList = [];
+    state = const AsyncValue.loading();
+    loadPokemons();
+  }
+
   Future<void> loadPokemons() async {
     try {
       final mResult = await mRepository.getPokemons("");
-      mPokemonList = mResult.item1;
-      state = AsyncValue.data(Tuple2(mPokemonList, mResult.item2));
+
+      if (mResult.item1 == false) {
+        customShowToast("No se fue posible cargar los Pokemones");
+      }
+
+      mPokemonList = mResult.item2;
+      state = AsyncValue.data(Tuple2(mPokemonList, mResult.item3));
     } catch (e) {
       state = AsyncValue.error(e, StackTrace.current);
     }
@@ -171,8 +200,13 @@ class PokemonsNotifier extends StateNotifier<AsyncValue<Tuple2<List<PokemonModel
   Future<void> loadMorePokemons(String mParameters) async {
     try {
       final mResult = await mRepository.getPokemons(mParameters);
-      mPokemonList.addAll(mResult.item1);
-      state = AsyncValue.data(Tuple2(mPokemonList, mResult.item2));
+
+      if (mResult.item1 == false) {
+        customShowToast("No se fue posible cargar más Pokemones");
+      }
+
+      mPokemonList.addAll(mResult.item2);
+      state = AsyncValue.data(Tuple2(mPokemonList, mResult.item3));
     } catch (e) {
       // En caso de error, mantenemos la lista actual y notificamos el error
       state = AsyncValue.error(e, StackTrace.current);
@@ -211,5 +245,9 @@ class PokemonsNotifier extends StateNotifier<AsyncValue<Tuple2<List<PokemonModel
 /// en la aplicación, optimizando el rendimiento y la gestión de recursos.
 final mPokemonByIdProvider = FutureProvider.autoDispose.family<PokemonModel, String>((ref, mId) async {
   final mRepository = ref.watch(mPokemonRepositoryProvider);
-  return mRepository.getPokemonForId(mId);
+  final mResult = await mRepository.getPokemonForId(mId);
+  if (mResult.item1 == false) {
+    customShowToast("No se encontró el Pokémon");
+  }
+  return mResult.item2;
 });

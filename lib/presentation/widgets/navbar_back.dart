@@ -117,12 +117,12 @@ class NavbarBack extends ConsumerWidget implements PreferredSizeWidget {
                     borderRadius: 500,
                     child: Icon(
                       TablerIcons.menu,
-                      color: (mIsDarkTheme ? mBlTheme.mColorBlack : mBlTheme.mColorWhite),
+                      color: mBlTheme.mColorBlack,
                       size: 22,
                     ),
                     callback: () => Scaffold.of(context).openDrawer(),
                   )
-                : null)),
+                : mMenu)),
         actions: mListActions);
   }
 }
