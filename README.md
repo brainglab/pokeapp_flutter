@@ -26,9 +26,6 @@ La aplicación PokeApp ha sido diseñada con un enfoque en la responsividad, ase
 - El contenido principal de la aplicación está centrado en la pantalla.
 - Se utiliza un ancho máximo de 800 píxeles para garantizar una legibilidad óptima en pantallas más grandes.
 
-Ejemplo de código que implementa esta restricción:
-
-
 ## Versiones de tecnologías usadas
 
 - Versión de Flutter: 3.24.3
