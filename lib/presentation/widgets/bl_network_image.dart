@@ -99,7 +99,7 @@ class BLNetworkImage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
 
-    String mImageAsset = mIsDarkTheme ? 'assets/images/no-image-dark.png' : 'assets/images/no-image.png';
+    String mImageAsset = mIsDarkTheme ? 'assets/images/no_image_dark.jpg' : 'assets/images/no_image_light.jpg';
 
     final mImageAsyncValue = ref.watch(mCachedPokemonImageProvider(mUrl!));
 

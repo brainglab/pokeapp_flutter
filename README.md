@@ -6,6 +6,23 @@ PokeApp es una aplicación Flutter que permite a los usuarios buscar informació
 
 - Versión de Flutter: 3.24.3
 
+
+## Capturas de pantalla
+
+A continuación, se muestran capturas de pantalla de la aplicación en temas claro y oscuro:
+
+### Tema Claro
+
+![Tema Claro](doc_mockups/mockup_light.png)
+
+### Tema Oscuro
+
+![Tema Oscuro](doc_mockups/mockup_dark.png)
+
+Estas imágenes muestran la interfaz de usuario de la aplicación en ambos modos, destacando la adaptabilidad del diseño a diferentes preferencias de tema.
+
+
+
 ## Características principales
 
 - Buscar Pokémon por nombre o ID
