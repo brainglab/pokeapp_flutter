@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokeapp_flutter/presentation/helpers/hex_color.dart';
 import 'package:pokeapp_flutter/presentation/pages/splash_page.dart';
@@ -19,11 +20,13 @@ Future<void> main() async {
   // esto requiere para la base de datos
   WidgetsFlutterBinding.ensureInitialized();
 
-  runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
-  );
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+    runApp(
+      const ProviderScope(
+        child: MyApp(),
+      ),
+    );
+  });
 }
 
 /// MyApp es la clase principal que define la estructura y configuración de la aplicación.
