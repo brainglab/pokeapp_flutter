@@ -6,7 +6,7 @@ class GetPokemonForIdUseCase {
 
   GetPokemonForIdUseCase({required this.pokemonRepository});
 
-  Future<Pokemon> call(int id) async {
+  Future<Pokemon> call(String id) async {
     return await pokemonRepository.getPokemonForId(id);
   }
 }

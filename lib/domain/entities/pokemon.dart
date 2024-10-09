@@ -1,4 +1,4 @@
-import 'package:pokeapp_flutter/domain/entities/ability.dart';
+import 'package:pokeapp_flutter/domain/entities/abilities.dart';
 import 'package:pokeapp_flutter/domain/entities/cries.dart';
 import 'package:pokeapp_flutter/domain/entities/game_indices.dart';
 import 'package:pokeapp_flutter/domain/entities/held_items.dart';
@@ -9,7 +9,7 @@ import 'package:pokeapp_flutter/domain/entities/stat.dart';
 import 'package:pokeapp_flutter/domain/entities/p_type.dart';
 
 class Pokemon {
-  List<Ability>? abilities;
+  List<Abilities>? abilities;
   int? baseExperience;
   Cries? cries;
   List<Species>? forms;

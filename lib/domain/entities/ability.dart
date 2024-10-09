@@ -1,9 +1,9 @@
 class Ability {
-  bool? isHidden;
-  int? slot;
+  String? name;
+  String? url;
 
   Ability({
-    this.isHidden,
-    this.slot,
+    this.name,
+    this.url,
   });
 }

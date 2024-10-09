@@ -1,4 +1,4 @@
-import 'package:pokeapp_flutter/data/models/ability_model.dart';
+import 'package:pokeapp_flutter/data/models/abilities_model.dart';
 import 'package:pokeapp_flutter/data/models/cries_model.dart';
 import 'package:pokeapp_flutter/data/models/game_indices_model.dart';
 import 'package:pokeapp_flutter/data/models/held_items_model.dart';
@@ -7,7 +7,7 @@ import 'package:pokeapp_flutter/data/models/p_type_model.dart';
 import 'package:pokeapp_flutter/data/models/specie_model.dart';
 import 'package:pokeapp_flutter/data/models/sprites_model.dart';
 import 'package:pokeapp_flutter/data/models/stat_model.dart';
-import 'package:pokeapp_flutter/domain/entities/ability.dart';
+import 'package:pokeapp_flutter/domain/entities/abilities.dart';
 import 'package:pokeapp_flutter/domain/entities/game_indices.dart';
 import 'package:pokeapp_flutter/domain/entities/held_items.dart';
 import 'package:pokeapp_flutter/domain/entities/move.dart';
@@ -40,16 +40,30 @@ class PokemonModel extends Pokemon {
     super.weight,
   });
 
-  factory PokemonModel.from(Map<String, dynamic> json) {
+  static List<PokemonModel> fromJsonList(List<dynamic>? jsonList) {
+    List<PokemonModel> items = [];
+    if (jsonList == null || jsonList.isEmpty) {
+      items = [];
+    } else {
+      for (var item in jsonList) {
+        final mPokemonModel = PokemonModel.fromMap(item);
+        items.add(mPokemonModel);
+      }
+    }
+
+    return items;
+  }
+
+  factory PokemonModel.fromMap(Map<String, dynamic> json) {
     return PokemonModel(
-      abilities: json["abilities"] == null ? [] : List<Ability>.from(json["abilities"]!.map((x) => AbilityModel.fromMap(x))),
+      abilities: json["abilities"] == null ? [] : List<Abilities>.from(json["abilities"]!.map((x) => AbilitiesModel.fromMap(x))),
       baseExperience: json["base_experience"],
       cries: json["cries"] == null ? null : CriesModel.fromMap(json["cries"]),
       forms: json["forms"] == null ? [] : List<Species>.from(json["forms"]!.map((x) => SpeciesModel.fromMap(x))),
       gameIndices: json["game_indices"] == null ? [] : List<GameIndices>.from(json["game_indices"]!.map((x) => GameIndicesModel.fromMap(x))),
       height: json["height"],
       heldItems: json["held_items"] == null ? [] : List<HeldItems>.from(json["held_items"]!.map((x) => HeldItemsModel.fromMap(x))),
-      id: json["id"],
+      id: json["id"] ?? int.parse(json["url"].split('/').reversed.skip(1).first),
       isDefault: json["is_default"],
       locationAreaEncounters: json["location_area_encounters"],
       moves: json["moves"] == null ? [] : List<Move>.from(json["moves"]!.map((x) => MoveModel.fromMap(x))),
