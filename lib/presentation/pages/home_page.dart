@@ -22,7 +22,7 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
     var mPokemonsProviderAsyncValue = ref.watch(mPokemonsProvider);
 
@@ -42,7 +42,7 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
             width: 50,
             callback: () async {
               // Cambiar el valor de mColorBackgroundLayout
-              ref.read(isDarkThemeProvider.notifier).update((state) => !state);
+              ref.read(mIsDarkThemeProvider.notifier).update((state) => !state);
             },
             child: Icon(
               mIsDarkTheme ? TablerIcons.sun : TablerIcons.moon,
@@ -102,7 +102,7 @@ class HomePageState extends ConsumerState<HomePage> with AutomaticKeepAliveClien
                                   itemCount: pokemons.item1.length,
                                   itemBuilder: (context, index) {
                                     final pokemon = pokemons.item1[index];
-                                    return PokemonCard(pokemon: pokemon, mBlTheme: mBlTheme);
+                                    return PokemonCard(pokemon: pokemon);
                                   },
                                 ),
                           // Indicador de carga al final de la lista

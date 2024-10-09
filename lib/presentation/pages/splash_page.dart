@@ -71,7 +71,7 @@ class SplashPageState extends ConsumerState<SplashPage> with SingleTickerProvide
 
   @override
   Widget build(BuildContext context) {
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
 
     return Scaffold(

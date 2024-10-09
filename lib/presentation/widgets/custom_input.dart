@@ -6,6 +6,30 @@ import 'package:flutter_tabler_icons/flutter_tabler_icons.dart';
 import 'package:pokeapp_flutter/presentation/providers/theme_provider.dart';
 import 'package:pokeapp_flutter/presentation/themes/bl_theme.dart';
 
+/// CustomInput es un widget personalizado que extiende ConsumerWidget para crear campos de entrada de texto personalizables.
+///
+/// Este widget proporciona una amplia gama de opciones de personalización para crear campos de entrada
+/// que se adaptan a las necesidades específicas de la aplicación.
+///
+/// Características principales:
+/// - Personalización de título, sugerencia (hint), controlador, validador y nodo de enfoque.
+/// - Opción para ocultar contraseñas.
+/// - Capacidad para especificar el tipo de entrada de texto y el número máximo de líneas.
+/// - Función de callback para manejar cambios en el texto.
+/// - Integración con Riverpod para la gestión de estado y temas.
+///
+/// Uso típico:
+/// ```dart
+/// CustomInput(
+///   title: 'Nombre de usuario',
+///   hint: 'Ingrese su nombre de usuario',
+///   validator: (value) => value.isEmpty ? 'Este campo es requerido' : null,
+///   controller: _usernameController,
+/// )
+/// ```
+///
+/// Esta clase es ideal para mantener una apariencia consistente de los campos de entrada en toda la aplicación,
+/// mientras permite la flexibilidad necesaria para casos de uso específicos.
 class CustomInput extends ConsumerWidget {
   const CustomInput({
     super.key,
@@ -37,7 +61,7 @@ class CustomInput extends ConsumerWidget {
     final mShowSuffixIcon = obscurePassword != null;
     final mPasswordVisible = obscurePassword ?? false;
 
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
 
     return Container(

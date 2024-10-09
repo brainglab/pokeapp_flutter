@@ -16,6 +16,26 @@ import 'package:pokeapp_flutter/domain/entities/pokemon.dart';
 import 'package:pokeapp_flutter/domain/entities/species.dart';
 import 'package:pokeapp_flutter/domain/entities/stat.dart';
 
+/// Modelo que representa un Pokémon en la aplicación.
+///
+/// Esta clase extiende la entidad base [Pokemon] y proporciona funcionalidad
+/// adicional para la capa de datos, incluyendo métodos de serialización y
+/// deserialización.
+///
+/// Características principales:
+/// - Hereda todos los atributos y métodos de la clase [Pokemon].
+/// - Implementa métodos para crear instancias a partir de mapas JSON.
+/// - Facilita la conversión entre la representación de datos y la entidad de dominio.
+///
+/// Uso típico:
+/// ```dart
+/// final pokemonData = {'id': 1, 'name': 'Bulbasaur', ...};
+/// final pokemonModel = PokemonModel.fromMap(pokemonData);
+/// ```
+///
+/// Esta clase es fundamental para la capa de datos, actuando como puente
+/// entre los datos crudos (por ejemplo, respuestas JSON de una API) y
+/// las entidades de dominio utilizadas en la lógica de negocio de la aplicación.
 class PokemonModel extends Pokemon {
   PokemonModel({
     super.abilities,
@@ -40,6 +60,31 @@ class PokemonModel extends Pokemon {
     super.weight,
   });
 
+  /// Convierte una lista de objetos JSON en una lista de modelos PokemonModel.
+  ///
+  /// Este método estático toma una lista de objetos dinámicos (típicamente provenientes
+  /// de una respuesta JSON) y los convierte en una lista de instancias de PokemonModel.
+  ///
+  /// @param jsonList Una lista de objetos dinámicos que representan Pokémon en formato JSON.
+  ///                 Puede ser nula o vacía.
+  ///
+  /// @return Una lista de PokemonModel. Si la entrada es nula o vacía, se devuelve una lista vacía.
+  ///
+  /// Funcionamiento:
+  /// 1. Inicializa una lista vacía de PokemonModel.
+  /// 2. Verifica si la lista de entrada es nula o vacía.
+  /// 3. Si es válida, itera sobre cada elemento de la lista.
+  /// 4. Para cada elemento, crea un nuevo PokemonModel usando el método fromMap.
+  /// 5. Añade cada modelo creado a la lista de resultados.
+  ///
+  /// Este método es útil para procesar respuestas de API que devuelven listas de Pokémon,
+  /// facilitando la conversión de datos crudos a objetos utilizables en la aplicación.
+  ///
+  /// Ejemplo de uso:
+  /// ```dart
+  /// final jsonData = [{'name': 'Pikachu', 'id': 25}, {'name': 'Charizard', 'id': 6}];
+  /// final pokemonList = PokemonModel.fromJsonList(jsonData);
+  /// ```
   static List<PokemonModel> fromJsonList(List<dynamic>? jsonList) {
     List<PokemonModel> items = [];
     if (jsonList == null || jsonList.isEmpty) {
@@ -54,6 +99,29 @@ class PokemonModel extends Pokemon {
     return items;
   }
 
+  /// Crea una instancia de PokemonModel a partir de un mapa de datos JSON.
+  ///
+  /// Este método de fábrica convierte un mapa de datos JSON en un objeto PokemonModel.
+  /// Es crucial para deserializar los datos recibidos de la API de Pokémon.
+  ///
+  /// @param json Un mapa de tipo <String, dynamic> que contiene los datos del Pokémon.
+  ///
+  /// @return Una nueva instancia de PokemonModel con los datos proporcionados.
+  ///
+  /// Funcionamiento:
+  /// - Procesa cada campo del JSON, convirtiéndolo al tipo de dato apropiado.
+  /// - Maneja casos donde ciertos campos pueden ser nulos o requerir conversión especial.
+  /// - Utiliza métodos fromMap de modelos relacionados para campos complejos.
+  /// - Para el campo 'id', si no está presente, lo extrae de la URL del Pokémon.
+  ///
+  /// Ejemplo de uso:
+  /// ```dart
+  /// final jsonData = {'name': 'Pikachu', 'id': 25, ...};
+  /// final pokemon = PokemonModel.fromMap(jsonData);
+  /// ```
+  ///
+  /// Nota: Este método es esencial para la capa de datos de la aplicación,
+  /// permitiendo una fácil conversión de datos crudos a objetos de modelo.
   factory PokemonModel.fromMap(Map<String, dynamic> json) {
     return PokemonModel(
       abilities: json["abilities"] == null ? [] : List<Abilities>.from(json["abilities"]!.map((x) => AbilitiesModel.fromMap(x))),

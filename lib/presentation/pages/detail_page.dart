@@ -14,7 +14,7 @@ class DetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
 
     // Comentario: Asumimos que el ID del Pokémon se pasa como argumento

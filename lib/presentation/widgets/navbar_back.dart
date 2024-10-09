@@ -6,6 +6,31 @@ import 'package:pokeapp_flutter/presentation/providers/theme_provider.dart';
 import 'package:pokeapp_flutter/presentation/themes/bl_theme.dart';
 import 'package:pokeapp_flutter/presentation/widgets/custom_button.dart';
 
+/// NavbarBack es un widget personalizado que implementa una barra de navegación con funcionalidad de retroceso.
+///
+/// Este widget extiende ConsumerWidget para integrarse con Riverpod y implementa PreferredSizeWidget
+/// para definir un tamaño preferido, lo que permite su uso como AppBar en un Scaffold.
+///
+/// Características principales:
+/// - Personalizable con título, colores de fondo, botones de retroceso y menú.
+/// - Integración con el sistema de temas de la aplicación.
+/// - Capacidad para mostrar acciones adicionales en la barra.
+/// - Ajuste automático del estilo de la barra de estado del sistema.
+///
+/// Uso típico:
+/// ```dart
+/// Scaffold(
+///   appBar: NavbarBack(
+///     mTitle: 'Página Principal',
+///     mShowBack: true,
+///     mGoBack: () => Navigator.pop(context),
+///   ),
+///   body: // ... contenido del cuerpo
+/// )
+/// ```
+///
+/// Este widget es ideal para mantener una apariencia consistente en la navegación
+/// de la aplicación, adaptándose al tema actual y proporcionando opciones de personalización.
 class NavbarBack extends ConsumerWidget implements PreferredSizeWidget {
   const NavbarBack({
     super.key,
@@ -35,7 +60,7 @@ class NavbarBack extends ConsumerWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
 
     return AppBar(

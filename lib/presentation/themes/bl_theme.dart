@@ -2,6 +2,30 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pokeapp_flutter/presentation/helpers/hex_color.dart';
 
+/// Clase que define el tema y estilos visuales de la aplicación.
+///
+/// [BlTheme] encapsula todos los elementos de diseño necesarios para mantener
+/// una apariencia consistente en toda la aplicación, incluyendo colores,
+/// dimensiones, y estilos de texto.
+///
+/// Características principales:
+/// - Define dimensiones estándar para padding, radios y avatares.
+/// - Establece una paleta de colores para diferentes propósitos en la UI.
+/// - Proporciona estilos de texto predefinidos para varios tamaños y colores.
+/// - Configura colores específicos para diferentes elementos de la interfaz.
+///
+/// Uso típico:
+/// ```dart
+/// final theme = BlTheme();
+/// // Acceder a colores
+/// Color primaryColor = theme.mColorPrimary;
+/// // Usar estilos de texto
+/// Text('Título', style: theme.mTextStylePrimaryJumbo);
+/// ```
+///
+/// Esta clase es fundamental para mantener la coherencia visual y facilitar
+/// cambios globales en el diseño de la aplicación. Se recomienda utilizarla
+/// en conjunto con un sistema de temas de Flutter para una mayor flexibilidad.
 class BlTheme {
   // dimensions
   late double mPadding;
@@ -109,7 +133,28 @@ class BlTheme {
   late TextStyle mTextStyleGrayBoldSmall;
   late TextStyle mTextStyleLightBoldSmall;
 
-  // colors
+  /// Constructor de la clase BlTheme.
+  ///
+  /// Este constructor inicializa un tema personalizado para la aplicación,
+  /// configurando colores, estilos de texto y otras propiedades visuales.
+  ///
+  /// @param mIsDarkTheme Un booleano que indica si se debe aplicar el tema oscuro.
+  ///        Si es true, se aplicará el tema oscuro; si es false, se aplicará el tema claro.
+  ///
+  /// Funcionalidad:
+  /// - Configura los colores base del tema (primario, acento, rojo, blanco, negro, gris, etc.).
+  /// - Ajusta los colores de fondo para diferentes partes de la aplicación.
+  /// - Inicializa estilos de texto para diferentes tamaños y pesos (mega, jumbo, título, normal, etc.).
+  /// - Adapta los colores y estilos según si se está utilizando el tema oscuro o claro.
+  ///
+  /// Uso:
+  /// ```dart
+  /// BlTheme theme = BlTheme(mIsDarkTheme: true); // Para tema oscuro
+  /// BlTheme theme = BlTheme(mIsDarkTheme: false); // Para tema claro
+  /// ```
+  ///
+  /// Este constructor es fundamental para mantener una apariencia consistente
+  /// en toda la aplicación y facilitar el cambio entre temas oscuro y claro.
   BlTheme({required bool mIsDarkTheme}) {
     mPadding = 20;
     mRadius = 10;

@@ -3,6 +3,28 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:pokeapp_flutter/presentation/providers/theme_provider.dart';
 import 'package:pokeapp_flutter/presentation/themes/bl_theme.dart';
 
+/// CustomButton es un widget personalizado que extiende ConsumerWidget para crear botones personalizables.
+///
+/// Esta clase proporciona una amplia gama de opciones de personalización para crear botones
+/// que se adaptan a las necesidades específicas de la aplicación.
+///
+/// Características principales:
+/// - Personalización de color, borde, tamaño y elevación.
+/// - Capacidad para añadir cualquier widget como hijo del botón.
+/// - Integración con Riverpod para la gestión de estado.
+/// - Adaptable al tema claro/oscuro de la aplicación.
+///
+/// Uso típico:
+/// ```dart
+/// CustomButton(
+///   color: Colors.blue,
+///   callback: () => print('Botón presionado'),
+///   child: Text('Presionar'),
+/// )
+/// ```
+///
+/// Esta clase es ideal para mantener una apariencia consistente de los botones en toda la aplicación,
+/// mientras permite la flexibilidad necesaria para casos de uso específicos.
 class CustomButton extends ConsumerWidget {
   const CustomButton({
     super.key,
@@ -33,7 +55,7 @@ class CustomButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    bool mIsDarkTheme = ref.watch(isDarkThemeProvider);
+    bool mIsDarkTheme = ref.watch(mIsDarkThemeProvider);
     BlTheme mBlTheme = BlTheme(mIsDarkTheme: mIsDarkTheme);
 
     return Container(
